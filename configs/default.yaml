@@ -1,0 +1,26 @@
+# Default experiment configuration.
+# Copy to <name>.local.yaml for machine-specific overrides (git-ignored).
+
+ingest:
+  source_dir: data/raw
+  chunk_size: 500          # tokens per chunk
+  chunk_overlap: 50
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  batch_size: 32           # embeddings per batch, kept small to limit CPU/RAM spikes
+
+vector_store:
+  persist_dir: chroma_db
+  collection: documents
+
+retrieval:
+  top_k: 4
+
+generation:
+  model: llama3.2:3b       # Ollama model tag
+  num_ctx: 4096            # context window cap (OOM mitigation)
+  num_gpu: 0               # force CPU-only inference
+  temperature: 0.0         # deterministic output for reproducible benchmarks
+
+benchmark:
+  repeats: 5
+  output_dir: results
