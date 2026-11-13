@@ -1,0 +1,57 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Secrets / local config ---
+.env
+*.local.yaml
+
+# --- Testing / coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Project data (raw documents are downloaded, not committed) ---
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# --- Vector store (rebuilt from data on each machine) ---
+chroma_db/
+*.sqlite3
+
+# --- Model weights (managed by Ollama, never committed) ---
+*.gguf
+*.bin
+*.safetensors
+
+# --- Benchmark output (raw run logs; summarised results are committed separately) ---
+results/*
+!results/.gitkeep
+!results/summary/
+
+# --- Logs ---
+*.log
+logs/

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local-rag-pipeline"
+version = "0.1.0"
+description = "Fully local RAG pipeline and CPU benchmarking suite for quantized small language models"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+authors = [{ name = "Seán Bardon" }]
+dependencies = [
+    "langchain",
+    "langchain-community",
+    "langchain-ollama",
+    "langchain-chroma",
+    "langchain-huggingface",
+    "chromadb",
+    "sentence-transformers",
+    "pypdf",
+    "psutil",
+    "pyyaml",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+eval = ["ragas", "pandas"]
+dev = ["pytest", "pytest-cov", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
