@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-15
 **Script:** [`scripts/poc_inference.py`](../scripts/poc_inference.py)
-**Raw output:** [`results/poc_llama_desktop.txt`](../results/poc_llama_desktop.txt), [`results/poc_phi_desktop.txt`](../results/poc_phi_desktop.txt), [`results/poc_qwen_desktop.txt`](../results/poc_qwen_desktop.txt)
+**Raw output:** [`poc_llama_desktop.txt`](../results/poc/poc_llama_desktop.txt), [`poc_phi_desktop.txt`](../results/poc/poc_phi_desktop.txt), [`poc_qwen_desktop.txt`](../results/poc/poc_qwen_desktop.txt)
 
 ## Goal
 
@@ -13,31 +13,39 @@ Test the project's core assumption: a quantized small language model can run thr
 | Item | Value |
 |---|---|
 | Machine | Desktop, Windows 10 |
-| CPU | AMD64 Family 23 Model 113 (AMD Zen 2), 12 logical cores |
+| CPU | AMD Ryzen 5 3600 (Zen 2), 6 cores / 12 threads |
 | RAM | 15.9 GB |
 | GPU | Not used (checked by the script, see below) |
 | Ollama | 0.40.16 |
 | Python | 3.11.4 |
 | Prompt | "Explain in three sentences what retrieval-augmented generation is." |
-| Settings | `num_ctx=4096`, `max_tokens=256`, 5 runs per model |
+| Settings | `num_gpu=0` (CPU only), `num_ctx=4096`, `num_predict=256`, `temperature=0`, `seed=42`, 5 runs per model |
+| Conditions | Mains power, Windows power mode "Best performance" (power plan: High performance), background apps closed |
 
 Run 1 is a cold start: the model is unloaded first, so it includes load time. Runs 2 to 5 are warm and show steady-state speed.
 
 Commands:
 
 ```powershell
-python scripts/poc_inference.py --model llama3.2:3b --runs 5 | Tee-Object results\poc_llama_desktop.txt
-python scripts/poc_inference.py --model phi4-mini --runs 5 | Tee-Object results\poc_phi_desktop.txt
-python scripts/poc_inference.py --model qwen3.5:4b --think off --runs 5 | Tee-Object results\poc_qwen_desktop.txt
+python scripts/poc_inference.py --model llama3.2:3b --runs 5 | Tee-Object results\poc\poc_llama_desktop.txt
+python scripts/poc_inference.py --model phi4-mini --runs 5 | Tee-Object results\poc\poc_phi_desktop.txt
+python scripts/poc_inference.py --model qwen3.5:4b --think off --runs 5 | Tee-Object results\poc\poc_qwen_desktop.txt
 ```
 
 ## Summary
 
-| Model | Thinking | Memory | CPU-only | Cold load (s) | Cold total (s) | Warm TTFT (s) | Warm prefill (tok/s) | Warm gen (tok/s) | Warm total (s) | Answer tokens |
-|---|---|---|---|---|---|---|---|---|---|---|
-| llama3.2:3b | model default | 2.39 GB | PASS | 10.94 | 20.94 | **2.12** | **530** | **14.5** | **9.43** | 106 |
-| phi4-mini | model default | 2.89 GB | PASS | 9.16 | 18.96 | 2.15 | 171 | 12.1 | 10.10 | 96 |
-| qwen3.5:4b | off | 2.93 GB | PASS | 24.30 | 41.67 | 2.21 | 153 | 9.0 | 13.91 | 105 |
+| Model | Params | Quant | Thinking | Download size (GB) | RAM when loaded (GiB) | CPU-only | Cold load (s) | Cold total (s) | Warm TTFT (s) | Warm prefill (tok/s) | Warm gen (tok/s) | Warm total (s) | Answer tokens |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| llama3.2:3b | 3.2B | Q4_K_M | model default | 2.0 | **2.39** | PASS | 10.94 | 20.94 | **2.12** | **530** | **14.5** | **9.43** | 106 |
+| phi4-mini | 3.8B | Q4_K_M | model default | 2.5 | 2.89 | PASS | 9.16 | 18.96 | 2.15 | 171 | 12.1 | 10.10 | 96 |
+| qwen3.5:4b | 4.2B | Q4_K_M | off | 3.3 | 2.93 | PASS | 24.30 | 41.67 | 2.21 | 153 | 9.0 | 13.91 | 105 |
+
+Where the model details come from:
+
+- **Params and Quant:** `ollama show <model>`. All three tags are 4-bit `Q4_K_M` builds, so the comparison is like for like.
+- **Download size:** the model's size on disk as shown by `ollama list` (decimal GB). The qwen3.5:4b download also includes a vision projector of about 333M parameters, which this test does not use.
+- **RAM when loaded:** the `size` that Ollama's `/api/ps` endpoint reports while the model is loaded, which the script converts with 1024³ (GiB). It is Ollama's own figure for the loaded model: the weights, plus the KV cache for `num_ctx=4096`, plus working buffers. It does not count the Ollama server process or the Python script, and it is not an OS measurement of process memory. The script's raw output labels this "GB", but the value is in GiB. A larger `num_ctx` would make this figure bigger.
+- **CPU-only:** the same `/api/ps` entry reported `size_vram` = 0, meaning 0% of the model was on the GPU.
 
 The warm TTFT and gen tok/s columns are the script's own averages of runs 2 to 5. I calculated the warm prefill and warm total columns as the mean of the same runs. TTFT means time to first token.
 
@@ -85,7 +93,7 @@ This is one prompt checked by eye, not a quality benchmark.
 
 ## Findings
 
-1. **The core assumption holds.** All three models ran fully on the CPU (0% GPU memory) in under 3 GB of RAM. Each warm answer took 9 to 14 seconds.
+1. **The core assumption holds.** All three 4-bit (Q4_K_M) models ran fully on the CPU (0% GPU memory). Each used 2.39 to 2.93 GiB of RAM when loaded with a 4,096-token context, which is under a fifth of the machine's RAM. Each warm answer took 9 to 14 seconds.
 2. **llama3.2:3b is the fastest.** It generated tokens about 20% faster than phi4-mini and about 60% faster than qwen3.5:4b. Its prefill was about 3 times faster than the others, which will matter once RAG adds retrieved context to the prompt.
 3. **Warm time to first token is about the same (2.1 to 2.2 s) for all three.** With a prompt this short, that time is mostly fixed overhead rather than prompt processing.
 4. **Cold starts are slow.** A cold start adds 9 to 28 seconds. qwen3.5:4b is the slowest (24 s load, 42 s total). The pipeline should keep the model loaded, for example with Ollama's `keep_alive`, instead of loading it for each request.
@@ -97,7 +105,8 @@ This is one prompt checked by eye, not a quality benchmark.
 - One short prompt, a single sentence. Real RAG prompts with retrieved chunks will be much longer, so prefill speed and TTFT will matter more.
 - One machine. Results on other hardware will differ.
 - Answer quality was judged on one answer per model, by eye.
-- All models used Ollama's default quantization for each tag.
+- All models used Ollama's default quantization for each tag (Q4_K_M). Other quantizations, such as Q8_0, were not tested, and they would change both speed and memory use.
+- Memory is Ollama's reported figure for the loaded model. Total system memory use during a run was not measured.
 
 ## Next steps
 
