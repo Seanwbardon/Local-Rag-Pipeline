@@ -51,6 +51,7 @@ chroma_db/
 results/*
 !results/.gitkeep
 !results/summary/
+!results/poc/
 
 # --- Logs ---
 *.log

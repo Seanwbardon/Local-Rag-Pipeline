@@ -1,0 +1,22 @@
+﻿Machine  | OS: Windows 10 | CPU: AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD | logical cores: 12 | RAM: 15.9 GB | Ollama: 0.40.16 | Python: 3.11.4
+Model    | llama3.2:3b | num_ctx=4096 | max_tokens=256 | think=model default
+
+Run 1/5...
+Run 2/5...
+Run 3/5...
+Run 4/5...
+Run 5/5...
+
+Answer (run 1):
+Retrieval-augmented generation (RAG) is a type of artificial intelligence (AI) model that combines the strengths of retrieval-based models and generation models to generate new content. Unlike traditional generation models, RAG models first retrieve relevant information from a large database or knowledge graph to inform their generation process, allowing them to produce more accurate and coherent outputs. By leveraging the strengths of both retrieval and generation, RAG models can generate high-quality content that is more informative and engaging than what traditional generation models can produce alone.
+
+run |  load s |  TTFT s | prefill tok/s | gen tok/s | tokens | total s
+----------------------------------------------------------------------
+  1 |   10.94 |   13.63 |          62.8 |      14.5 |    106 |   20.94
+  2 |    0.01 |    2.13 |         511.9 |      14.6 |    106 |    9.38
+  3 |    0.00 |    2.13 |         531.7 |      14.6 |    106 |    9.38
+  4 |    0.00 |    2.11 |         537.0 |      14.6 |    106 |    9.36
+  5 |    0.00 |    2.11 |         538.8 |      14.2 |    106 |    9.60
+
+Mean of warm runs | TTFT 2.12 s | gen 14.5 tok/s
+CPU-only check    | PASS (model memory 2.39 GB, on GPU 0.00 GB (0%))
