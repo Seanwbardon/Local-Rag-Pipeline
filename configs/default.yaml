@@ -3,13 +3,13 @@
 # Relative paths are resolved from the repository root.
 
 ollama:
-  host: http://localhost:11434   # overridden by the OLLAMA_HOST environment variable if set
+  host: http://127.0.0.1:11434   # overridden by the OLLAMA_HOST environment variable if set
   num_gpu: 0                     # CPU-only: applied to every Ollama call (embeddings and generation)
 
 ingest:
   source_dir: data/raw
-  chunk_size: 800                # characters (~160-200 tokens), under all-minilm's 256-token num_ctx
-  chunk_overlap: 100             # characters shared between neighbouring chunks
+  chunk_size: 600                # characters (~160-200 tokens), under all-minilm's 256-token num_ctx
+  chunk_overlap: 80             # characters shared between neighbouring chunks
   embedding_model: all-minilm    # all-MiniLM-L6-v2, served by Ollama
   batch_size: 32                 # chunks embedded per request, keeps CPU/RAM use steady
 
