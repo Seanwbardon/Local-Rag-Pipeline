@@ -34,7 +34,7 @@ DEFAULT_PROMPT = "Explain in three sentences what retrieval-augmented generation
 # --------------------------------------------------------------------------- Ollama HTTP helpers
 
 def ollama_host() -> str:
-    host = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+    host = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434").rstrip("/")
     if not host.startswith("http"):
         host = "http://" + host
     return host
