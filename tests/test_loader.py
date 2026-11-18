@@ -39,8 +39,13 @@ def test_clean_text_joins_hyphenated_line_breaks():
     assert clean_text("network config-\nuration file") == "network configuration file"
 
 
-def test_clean_text_keeps_paragraphs_but_joins_lines():
-    assert clean_text("line one\nline two\n\n\nnext paragraph") == "line one line two\n\nnext paragraph"
+def test_clean_text_keeps_line_breaks_and_limits_blank_lines():
+    assert clean_text("line one\nline two\n\n\n\nnext paragraph") == "line one\nline two\n\nnext paragraph"
+
+
+def test_clean_text_preserves_code_block_layout():
+    config = "network:\n  ethernets:\n    eth0:\n      dhcp4: true"
+    assert clean_text(config) == config
 
 
 def test_clean_text_collapses_whitespace():

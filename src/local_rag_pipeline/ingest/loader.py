@@ -41,19 +41,19 @@ class LoadReport:
 # --------------------------------------------------------------------------- text cleaning
 
 def clean_text(text: str) -> str:
-    """Normalise text extracted from a PDF without changing its meaning.
+    """Normalise text extracted from a PDF without changing its meaning or layout.
 
-    - joins words split across a line break with a hyphen ("config-\\nuration" -> "configuration")
-    - turns single line breaks inside a paragraph into spaces
-    - keeps paragraph breaks (blank lines), which the splitter uses as natural boundaries
-    - collapses runs of spaces and tabs
+    Technical documentation is full of commands and config files, where line breaks and
+    indentation carry meaning, so line structure is kept. This function only:
+    - joins lowercase words split across a line with a hyphen ("config-\\nuration" -> "configuration")
+    - collapses runs of spaces and tabs inside a line (leading indentation is kept)
+    - removes trailing spaces and reduces 3+ blank lines to a single blank line
     """
-    text = text.replace("\r\n", "\n").replace("\r", "\n").replace(" ", " ")
-    text = re.sub(r"(\w)-\n(\w)", r"\1\2", text)          # hyphenated line breaks
-    text = re.sub(r"[ \t]+", " ", text)                     # runs of spaces/tabs
-    text = re.sub(r" *\n *", "\n", text)                    # spaces around line breaks
-    text = re.sub(r"\n{2,}", "\n\n", text)                  # paragraph breaks -> exactly one blank line
-    text = re.sub(r"(?<!\n)\n(?!\n)", " ", text)            # single line breaks -> spaces
+    text = text.replace("\r\n", "\n").replace("\r", "\n").replace("\u00a0", " ")
+    text = re.sub(r"([a-z])-\n([a-z])", r"\1\2", text)    # hyphenated line breaks in prose
+    text = re.sub(r"(?<=\S)[ \t]+", " ", text)              # runs of spaces after text, not indentation
+    text = re.sub(r"[ \t]+\n", "\n", text)                  # trailing spaces
+    text = re.sub(r"\n{3,}", "\n\n", text)                  # at most one blank line
     return text.strip()
 
 
