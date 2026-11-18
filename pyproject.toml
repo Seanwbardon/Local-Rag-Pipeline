@@ -19,6 +19,7 @@ dependencies = [
     "psutil",
     "pyyaml",
     "python-dotenv",
+    "langchain-text-splitters",
 ]
 
 [project.optional-dependencies]
