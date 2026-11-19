@@ -8,8 +8,8 @@ ollama:
 
 ingest:
   source_dir: data/raw
-  chunk_size: 600                # characters (~160-200 tokens), under all-minilm's 256-token num_ctx
-  chunk_overlap: 80             # characters shared between neighbouring chunks
+  chunk_size: 500                # characters (~124 tokens on average), under all-minilm's 256-token num_ctx
+  chunk_overlap: 70             # characters shared between neighbouring chunks
   embedding_model: all-minilm    # all-MiniLM-L6-v2, served by Ollama
   batch_size: 32                 # chunks embedded per request, keeps CPU/RAM use steady
 
