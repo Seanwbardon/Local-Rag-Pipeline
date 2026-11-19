@@ -14,13 +14,12 @@ dependencies = [
     "langchain-community",
     "langchain-ollama",
     "langchain-chroma",
-    "langchain-huggingface",
     "chromadb",
-    "sentence-transformers",
     "pypdf",
     "psutil",
     "pyyaml",
     "python-dotenv",
+    "langchain-text-splitters",
 ]
 
 [project.optional-dependencies]
