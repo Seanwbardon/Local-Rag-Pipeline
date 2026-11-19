@@ -2,7 +2,6 @@
 
 Each decision records the context, the options considered, what was chosen and why, with
 the evidence where it was measured. Decisions are numbered in the order they were made.
-Items in `[square brackets]` are still to be filled in.
 
 | # | Decision | Date |
 |---|---|---|
@@ -99,7 +98,7 @@ models are unlikely to know already, so that retrieval can be shown to matter.
 |---|---|
 | Source | https://documentation.ubuntu.com/server ("Current PDF") |
 | File | `data/raw/ubuntu-server-guide.pdf` (not committed; git-ignored) |
-| Downloaded | '18th Nov 2026' |
+| Downloaded | 18 Nov 2026 |
 | Licence | None stated for the guide as a whole (the repository's licence field is unset); © Canonical Ltd. Website terms allow personal, educational and non-commercial use. One page (p. 994) is CC BY-SA 4.0. |
 | SHA-256 | `52C5F63F118F347130E1FDD7564586308EA5E7354CED2088B77404EFC839C7CC` |
 | Size | 1,140 pages, 0 empty, all text-based (no OCR needed) |
@@ -189,9 +188,17 @@ retrieved, from their first ~256 tokens. A rebuild from scratch gave identical c
 - The collection records which embedding model built it and refuses vectors from another.
 
 **Evidence.** Full ingestion at 500 / 70 (D8) on the desktop: 4,973 chunks embedded in
-166.6 s (29.9 chunks/s), 204.3 s in total. Laptop: [ ] chunks in [ ] s ([ ] chunks/s),
-[ ] s in total. (At 600 / 80 the desktop took 204.5 s to embed 4,177 chunks, 20.4 chunks/s:
-fewer over-long chunks means fewer refused batches to split and retry.)
+166.6 s (29.9 chunks/s), 204.3 s in total. Laptop: 4,973 chunks embedded in 396.6 s
+(12.5 chunks/s), 471.9 s in total. Both machines produced identical chunks, tokens (619,198)
+and truncation (85), and the desktop embedded about 2.4× faster.
+
+| Chunk size / overlap | Desktop | Laptop |
+|---|---|---|
+| 600 / 80 (4,177 chunks) | 204.5 s, 20.4 chunks/s | 483.6 s, 8.6 chunks/s |
+| 500 / 70 (4,973 chunks) | 166.6 s, 29.9 chunks/s | 396.6 s, 12.5 chunks/s |
+
+At 500 / 70 both machines are faster despite 19% more chunks: fewer over-long chunks means
+fewer refused batches to split and retry (D8).
 
 ## D10. Connect to Ollama at 127.0.0.1, not localhost
 
@@ -230,7 +237,13 @@ immediately instead of silently falling back to a default during a long benchmar
 
 - **Headings lose their spaces** in extraction (e.g. "AddingaGitoliteuser"), from how text is
   stored in this PDF. Body text is unaffected. To revisit with pypdf's layout extraction mode.
-- **Page footers** ("9 of 1139") appear in chunks. A one-line filter is planned.
+- **Page footers** ("9 of 1139") appear in 22.6% of chunks (1,126 of 4,973), making up 3.9%
+  of those chunks' text on average; 12 chunks are mostly footer. Page citations come from
+  chunk metadata, not the footer, so they are unaffected, and the effect on embeddings is
+  expected to be negligible. A filter is deferred to a later branch.
+- **Table-of-contents pages** become chunks of headings with dot leaders and page numbers
+  (e.g. "3.5 Contribute to this documentation . . . 1114"). They may match many questions
+  without containing an answer; to be checked once retrieval is evaluated.
 - **Hyphen joining** can occasionally merge a real hyphenated word split at a line end.
 - **Chunks don't cross pages**, so content split by a page break is in two chunks.
 - **Truncation:** 1.7% of chunks (85 of 4,973) exceed the embedding context at 500

@@ -8,7 +8,7 @@ Usage (from the repository root, with the virtual environment active):
 Use --reset whenever the documents, chunk size or embedding model change, so no chunks
 from the old settings are left behind.
 
-A summary is printed and saved as JSON under results/ingest/ (git-ignored).
+A summary is printed and saved as JSON under results/ingest/ (committed as evidence).
 """
 
 from __future__ import annotations
