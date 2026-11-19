@@ -52,6 +52,7 @@ results/*
 !results/.gitkeep
 !results/summary/
 !results/poc/
+!results/ingest/
 
 # --- Logs ---
 *.log
