@@ -92,30 +92,9 @@ python -m venv .venv
 pip install -e ".[dev]"
 
 ollama pull llama3.2:3b
-ollama pull all-minilm        # embedding model used for ingestion
 ```
 
-Usage instructions for later stages will be added as each one is completed.
-
-### Ingest the documents
-
-Download the *Ubuntu Server documentation* PDF ("Current PDF" at
-https://documentation.ubuntu.com/server) and save it as `data/raw/ubuntu-server-guide.pdf`.
-The link always serves the latest version, so to reproduce the results, check the file's
-SHA-256 against the one recorded in [docs/decisions.md](docs/decisions.md) (D5).
-
-With Ollama running and the virtual environment active:
-
-```bash
-python scripts/ingest.py --reset                          # build the store from scratch
-python scripts/ingest.py                                  # add or update chunks only
-python scripts/ingest.py --config configs/other.yaml --reset   # use different settings
-```
-
-This loads the documents, splits them into chunks (settings in `configs/default.yaml`),
-embeds them on the CPU with `all-minilm` and stores them in `chroma_db/`. Use `--reset`
-whenever the documents, chunk settings or embedding model change. Each run prints a summary
-and saves it, with a full copy of its settings, to `results/ingest/`.
+Usage instructions will be added as each pipeline stage is completed.
 
 ## Test environment
 
@@ -139,8 +118,8 @@ The two machines represent two hardware tiers: a mid-range desktop with 16 GB of
 ## Project status
 
 - [x] Repository scaffolding
-- [x] CPU-only inference proof of concept
-- [x] Ingestion pipeline (chunking, embedding, ChromaDB)
+- [ ] CPU-only inference proof of concept
+- [ ] Ingestion pipeline (chunking, embedding, ChromaDB)
 - [ ] Retrieval and generation chain
 - [ ] Profiling harness (TTFT, TPS, peak RAM)
 - [ ] Evaluation dataset with reference answers
