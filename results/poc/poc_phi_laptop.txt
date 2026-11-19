@@ -1,0 +1,22 @@
+﻿Machine  | OS: Windows 11 | CPU: AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD | logical cores: 8 | RAM: 7.3 GB | Ollama: 0.40.16 | Python: 3.14.2
+Model    | phi4-mini | num_ctx=4096 | max_tokens=256 | think=model default
+
+Run 1/5...
+Run 2/5...
+Run 3/5...
+Run 4/5...
+Run 5/5...
+
+Answer (run 1):
+Retrieval-augmented generation (RAG) is a method that combines the power of retrieval systems with generative AI models to produce more accurate and contextually relevant responses. It involves first retrieving relevant information from a database or knowledge base and then using a generative model to create a coherent and informative answer based on that retrieved data. This approach enhances the quality of AI-generated content by ensuring that it is grounded in up-to-date and specific information.
+
+run |  load s |  TTFT s | prefill tok/s | gen tok/s | tokens | total s
+----------------------------------------------------------------------
+  1 |   22.48 |   26.47 |          15.9 |       5.6 |     91 |   42.14
+  2 |    0.06 |    2.37 |          75.6 |       5.5 |     96 |   19.75
+  3 |    0.02 |    2.35 |          55.2 |       5.1 |     96 |   21.14
+  4 |    0.02 |    2.41 |          50.2 |       4.7 |     96 |   22.67
+  5 |    0.01 |    2.27 |          79.1 |       5.9 |     96 |   18.66
+
+Mean of warm runs | TTFT 2.35 s | gen 5.3 tok/s
+CPU-only check    | PASS (model memory 2.89 GB, on GPU 0.00 GB (0%))
